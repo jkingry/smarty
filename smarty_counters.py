@@ -2,6 +2,8 @@ from collections import defaultdict
 
 
 class SmartyBoxCounter:
+    BOX_LINE = "box"
+    
     def __init__(
         self,
         color_group_size=None,
@@ -13,7 +15,6 @@ class SmartyBoxCounter:
             lambda: default_group_size, **color_group_size
         )
         self.color_seconds = defaultdict(lambda: default_seconds, **color_seconds)
-        self.elapsed_seconds = 0
         self.group_counts = defaultdict(int)
 
     def finish_box(self):
@@ -25,38 +26,35 @@ class SmartyBoxCounter:
         return finish_time
 
     def reset(self):
-        self.elapsed_seconds = 0
         self.group_counts.clear()
 
-    def add(self, color):
+    def add_smarty(self, color):
         self.group_counts[color] += 1
 
         if self.group_counts[color] == self.color_group_size[color]:
             self.group_counts[color] = 0
-            self.elapsed_seconds += self.color_seconds[color]
             return self.color_seconds[color]
 
         return 0
+    
+    def add(line):
+        if line == BOX_LINE:
+            return self.finish_box()
+        else:
+            return self.add_smarty(line)
 
 
 class SmartyCounter:
-    BOX_LINE = "box"
     def __init__(self, counter: SmartyBoxCounter):
         self.counter = counter
-        self.total_elapsed_seconds = 0
+        self.elapsed_seconds = 0
 
     def finish(self):
-        return self.add(BOX_LINE)
+        self.elasped_seconds += self.counter.finish_box()
 
     def reset(self):
-        self.total_elapsed_seconds = 0
+        self.elapsed_seconds = 0
         self.counter.reset()
 
-    def add(self, input_line):
-        if input_line == BOX_LINE:
-            added_seconds = self.counter.finish_box()
-        else:
-            added_seconds = self.counter.add(input_line)
-        self.total_elapsed_seconds += added_seconds
-
-        return added_seconds
+    def add(self, line):
+        self.elasped_seconds += self.counter.add(line)
