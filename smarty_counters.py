@@ -40,19 +40,20 @@ class SmartyBoxCounter:
 
 
 class SmartyCounter:
+    BOX_LINE = "box"
     def __init__(self, counter: SmartyBoxCounter):
         self.counter = counter
         self.total_elapsed_seconds = 0
 
     def finish(self):
-        return self.add("box")
+        return self.add(BOX_LINE)
 
     def reset(self):
         self.total_elapsed_seconds = 0
         self.counter.reset()
 
     def add(self, input_line):
-        if input_line == "box":
+        if input_line == BOX_LINE:
             added_seconds = self.counter.finish_box()
         else:
             added_seconds = self.counter.add(input_line)
